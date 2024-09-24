@@ -1,4 +1,4 @@
-package py.una.server.tcp;
+package client.tcp;
 
 
 import java.io.*;
