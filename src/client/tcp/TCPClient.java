@@ -31,6 +31,8 @@ public class TCPClient {
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromServer;
         String fromUser;
+        
+        //Meter el login
 
         while ((fromServer = in.readLine()) != null) {
             System.out.println("Servidor: " + fromServer);
