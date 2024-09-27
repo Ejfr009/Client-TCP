@@ -80,7 +80,7 @@ public class Logout extends javax.swing.JFrame {
         // TODO add your handling code here:
         try
         {
-            Thread.sleep(100); // 2000 milisegundos = 2 segundos
+            Thread.sleep(100); //
         }
         catch (InterruptedException e) 
         {

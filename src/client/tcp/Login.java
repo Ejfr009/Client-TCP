@@ -19,20 +19,64 @@ public class Login extends javax.swing.JFrame {
      */
     
     private boolean validador = false;
-    EstructuraDatos datos;
+    private EstructuraDatos datos;
+    Socket socket1;
+    ObjectOutputStream out;
+    ObjectInputStream in;
     
     
     public Login() {
         initComponents();
+        CrearConexion();
         datos = new EstructuraDatos();
     }
     
     public void ExtraerDatos()
     {   
-        datos.user = jTextField1.getText();
-        datos.password = jPasswordField1.getText();
-        //se le manda la estructura al servidor y este retorna un booleano
-        //validador = respuesta.
+        datos.setUser(jTextField1.getText());
+        datos.setPassword(jPasswordField1.getText());
+        
+        try {
+            // Enviar el objeto serializado al servidor
+            out.writeObject(datos);
+
+            // Leer la respuesta del servidor (cast a boolean)
+            validador = (boolean) in.readObject();
+    
+        } catch (IOException e) {
+            // Manejo de errores de I/O
+            e.printStackTrace();
+            System.out.println("Error de comunicación con el servidor.");
+        } catch (ClassNotFoundException e) {
+            // Manejo de errores en la deserialización (cuando no se encuentra la clase del objeto recibido)
+            e.printStackTrace();
+            System.out.println("Error en la lectura de datos: clase no encontrada.");
+        }
+        
+    }
+    
+    private void CrearConexion()
+    {
+        
+        try 
+        {
+            socket1 = new Socket("localhost", 4444);
+            out = new ObjectOutputStream(socket1.getOutputStream());
+            in = new ObjectInputStream(socket1.getInputStream());
+        } 
+        catch (UnknownHostException e) 
+        {
+            System.err.println("Host desconocido");
+            System.exit(1);
+        } 
+        catch (IOException e)
+        {
+            System.err.println("Error de I/O en la conexion al host");
+            System.exit(1);
+        }
+
+      
+       
     }
 
     /**
@@ -129,9 +173,13 @@ public class Login extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         //verificar password y user 
         
-        this.setVisible(false);
-        Logout logout = new Logout();
-        logout.setVisible(true);
+        ExtraerDatos();
+        if (validador)
+        {    
+            this.setVisible(false);
+            Logout logout = new Logout();
+            logout.setVisible(true);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -167,54 +215,6 @@ public class Login extends javax.swing.JFrame {
             public void run() 
             {
                 new Login().setVisible(true);
-                
-                Socket unSocket = null;
-                PrintWriter out = null;
-                BufferedReader in = null;
-
-                try {
-                    unSocket = new Socket("localhost", 4444);
-                    // enviamos nosotros
-                    out = new PrintWriter(unSocket.getOutputStream(), true);
-
-                    //viene del servidor
-                    in = new BufferedReader(new InputStreamReader(unSocket.getInputStream()));
-                } catch (UnknownHostException e) {
-                    System.err.println("Host desconocido");
-                    System.exit(1);
-                } catch (IOException e) {
-                    System.err.println("Error de I/O en la conexion al host");
-                    System.exit(1);
-                }
-
-
-                //BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-                String fromServer;
-                String fromUser;
-
-                //Meter el login
-
-                while ((fromServer = in.readLine()) != null) 
-                {
-                    System.out.println("Servidor: " + fromServer);
-                    if (fromServer.equals("Bye")) 
-                    {
-                        break;
-                    }
-
-                    fromUser = stdIn.readLine();
-                    if (fromUser != null) {
-                        System.out.println("Cliente: " + fromUser);
-
-                        //escribimos al servidor
-                        out.println(fromUser);
-                    }
-                }
-
-                out.close();
-                in.close();
-                stdIn.close();
-                unSocket.close();
             }
         } );
     }
