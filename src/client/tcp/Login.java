@@ -4,6 +4,7 @@
  */
 package client.tcp;
 
+import Libreria.EstructuraDatos;
 import java.io.*;
 import java.net.*;
 
@@ -20,9 +21,9 @@ public class Login extends javax.swing.JFrame {
     
     private boolean validador = false;
     private EstructuraDatos datos;
-    Socket socket1;
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    private Socket socket1;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
     
     
     public Login() {
@@ -36,20 +37,20 @@ public class Login extends javax.swing.JFrame {
         datos.setUser(jTextField1.getText());
         datos.setPassword(jPasswordField1.getText());
         
+        
         try {
             // Enviar el objeto serializado al servidor
             out.writeObject(datos);
+            out.reset();
 
             // Leer la respuesta del servidor (cast a boolean)
             validador = (boolean) in.readObject();
     
         } catch (IOException e) {
             // Manejo de errores de I/O
-            e.printStackTrace();
             System.out.println("Error de comunicación con el servidor.");
         } catch (ClassNotFoundException e) {
             // Manejo de errores en la deserialización (cuando no se encuentra la clase del objeto recibido)
-            e.printStackTrace();
             System.out.println("Error en la lectura de datos: clase no encontrada.");
         }
         
@@ -61,8 +62,11 @@ public class Login extends javax.swing.JFrame {
         try 
         {
             socket1 = new Socket("localhost", 4444);
+            
             out = new ObjectOutputStream(socket1.getOutputStream());
+            
             in = new ObjectInputStream(socket1.getInputStream());
+            
         } 
         catch (UnknownHostException e) 
         {
