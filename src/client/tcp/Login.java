@@ -181,7 +181,7 @@ public class Login extends javax.swing.JFrame {
         if (validador)
         {    
             this.setVisible(false);
-            Logout logout = new Logout(socket1,out,in);
+            Logout logout = new Logout(socket1,out,in,datos.getUser());
             logout.setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
