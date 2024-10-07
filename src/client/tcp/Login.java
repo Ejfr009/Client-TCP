@@ -61,7 +61,7 @@ public class Login extends javax.swing.JFrame {
         
         try 
         {
-            socket1 = new Socket("localhost", 4444);
+            socket1 = new Socket("192.168.180.71", 4444);
             
             out = new ObjectOutputStream(socket1.getOutputStream());
             

@@ -28,6 +28,19 @@ public class Logout extends javax.swing.JFrame {
     public javax.swing.JScrollPane jScrollPane1;
     private ActualizadorTexto actualizador;
     public String Nombre;
+    
+    private void CerrarConexion()
+    {
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null) socket.close();
+        } catch (IOException ex) {
+            System.err.println("Error de Stream");
+            System.exit(1);
+        }
+    }
+    
     public Logout(Socket socket, ObjectOutputStream out,ObjectInputStream in, String Nombre) {
         //Se inicializan los componentes del Logout
         initComponents();
@@ -36,7 +49,7 @@ public class Logout extends javax.swing.JFrame {
         this.out = out;
         this.in = in;
         this.Nombre=Nombre;
-        jTextArea2.setText("Prueba");
+        
         
         jTextField1.setText(Nombre);
         actualizador = new ActualizadorTexto(this);
@@ -131,7 +144,9 @@ public class Logout extends javax.swing.JFrame {
         try
         {
             try {
-                out.writeObject(Nombre);
+                out.writeObject(Nombre);{
+                CerrarConexion();
+            }
             } catch (IOException ex) {
                 Logger.getLogger(Logout.class.getName()).log(Level.SEVERE, null, ex);
             }
